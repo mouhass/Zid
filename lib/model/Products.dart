@@ -1,16 +1,8 @@
 class Products {
   String? date;
-  double? avancement;
+  String? avancement;
+  String? imageProduit;
+  String? nomProduit;
 
-  Products({
-    this.date,
-    this.avancement,
-  });
-
-  factory Products.fromJson(Map<String, dynamic> json) {
-    return Products(
-      date: json['date'],
-      avancement: json['avancement'],
-    );
-  }
+  Products({this.date, this.avancement, this.imageProduit, this.nomProduit});
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zid/screens/Encheres/detailsEncheres.dart';
 import 'package:zid/screens/profile/monProfile.dart';
@@ -13,25 +14,6 @@ class MesEncheresState extends State<MesEncheres> {
   MesEncheresState({required this.uid});
   @override
   Widget build(BuildContext context) {
-    List<deatilsEncheres> LesEncheres = [
-      deatilsEncheres(
-        imageProduit: 'assets/smartWatch.png',
-        nomProduit: "HUAWEI SMART WATCH GT2",
-        date: "2021-07-21",
-        avancement: 45.5,
-      ),
-      deatilsEncheres(
-        imageProduit: 'assets/modifiedphone.png',
-        nomProduit: "REDMI 7A BLACK",
-        date: "2021-07-22",
-        avancement: 14,
-      ),
-    ];
-
-    Widget showEnchere(int i) {
-      return LesEncheres[i];
-    }
-
     return (Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -63,11 +45,68 @@ class MesEncheresState extends State<MesEncheres> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20)),
                   ]),
-                  // LesEncheres[0],
-                  // LesEncheres[1],
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return new Text("Loading");
+                        }
+                        DocumentSnapshot<Object?> documentData =
+                            snapshot.data as DocumentSnapshot;
 
-                  showEnchere(0),
-                  showEnchere(1),
+                        if (documentData['encheres'] != null) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              for (var x = 0;
+                                  x < documentData['encheres'].length;
+                                  x++)
+                                Column(children: <Widget>[
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  deatilsEncheres(
+                                    imageProduit: documentData['encheres'][x]
+                                        ['imageProduit'],
+                                    nomProduit: documentData['encheres'][x]
+                                        ['nomProduit'],
+                                    date: documentData['encheres'][x]['date'],
+                                    avancement: documentData['encheres'][x]
+                                            ['avancement']
+                                        .toString(),
+                                  )
+                                ])
+                            ],
+                          );
+                        } else {
+                          return Center(
+                              child:
+                                  Stack(alignment: Alignment.center, children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(80),
+                                child: Container(
+                                    height: 66,
+                                    width: 63,
+                                    color: Colors.white)),
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(80),
+                                child: Container(
+                                    height: 50,
+                                    width: 50,
+                                    color: Colors.red.shade300)),
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(80),
+                                child: Container(
+                                    height: 55,
+                                    width: 55,
+                                    color: Colors.red.shade100)),
+                            Icon(Icons.notifications, color: Colors.grey)
+                          ]));
+                        }
+                      }),
                 ])))));
   }
 }

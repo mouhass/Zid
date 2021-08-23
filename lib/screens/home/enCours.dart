@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zid/screens/produits/detailsProduitEnDirect.dart';
 import 'package:zid/screens/home/pageSpeciale.dart';
-import 'package:zid/screens/home/prochaines.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

@@ -6,7 +6,7 @@ import 'package:date_count_down/date_count_down.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class deatilsEncheres extends StatefulWidget {
-  double avancement;
+  String avancement;
   String date;
   String nomProduit;
   String imageProduit;
@@ -25,7 +25,7 @@ class deatilsEncheres extends StatefulWidget {
 }
 
 class deatilsEncheresState extends State<deatilsEncheres> {
-  double avancement;
+  String avancement;
   String date;
   String nomProduit;
   String imageProduit;
@@ -151,7 +151,7 @@ class deatilsEncheresState extends State<deatilsEncheres> {
                 ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Container(
-                      width: avancement,
+                      width: double.parse(avancement),
                       height: 28,
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -177,8 +177,8 @@ class deatilsEncheresState extends State<deatilsEncheres> {
                 Positioned(
                   top: 4,
                   left: 38,
-                  child:
-                      Text('${((avancement / 70) * 100).toStringAsFixed(0)}%'),
+                  child: Text(
+                      '${((double.parse(avancement) / 70) * 100).toStringAsFixed(0)}%'),
                 ),
               ])
             ]),

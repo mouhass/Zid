@@ -21,4 +21,14 @@ class Users {
       required this.pseudo,
       required this.listEncheres,
       required this.listFavoris});
+
+  Map<String, dynamic> encheresItems(
+      String imageProduit, String nomProduit, String date, String avancement) {
+    return {
+      "imageProduit": imageProduit,
+      'nomProduit': nomProduit,
+      "date": date,
+      "avancement": avancement,
+    };
+  }
 }

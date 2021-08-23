@@ -43,7 +43,7 @@ class nouvellePage extends State<pageSpeciale> {
   Widget build(BuildContext context) {
     // String date;
     // int participants;
-
+    RxInt count = 200.obs;
     countTime = CountDown().timeLeft(DateTime.parse("2021-07-21"), "completed");
     return DefaultTabController(
         length: 3,
@@ -54,6 +54,25 @@ class nouvellePage extends State<pageSpeciale> {
                 title: Image(image: AssetImage('assets/Logo@1X.png')),
                 backgroundColor: Colors.white,
                 actions: [
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return new Text("Loading");
+                        }
+                        DocumentSnapshot<Object?> documentData =
+                            snapshot.data as DocumentSnapshot;
+                        count =
+                            RxInt(int.parse(documentData['montant'])) as RxInt;
+                        return Center(
+                            child: Text("Votre montant: " + count.toString(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)));
+                      }),
                   IconButton(
                     icon: Image.asset('assets/avatar.png'),
                     color: Colors.orange,

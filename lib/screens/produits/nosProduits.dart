@@ -1,15 +1,20 @@
 import 'dart:async';
+import 'dart:collection';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:date_count_down/date_count_down.dart';
+import 'package:get/get.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zid/model/Products.dart';
 import 'package:zid/screens/produits/detailsProduits.dart';
+import 'package:zid/services/database.dart';
 
 class NosProduit extends StatefulWidget {
   String uid;
   String productID;
-  double avancement;
+  String avancement;
   String date;
   String vipOrNot;
   Color theColor;
@@ -40,7 +45,7 @@ class NosProduit extends StatefulWidget {
 class NosProduitsState extends State<NosProduit> {
   String uid;
   String productID;
-  double avancement;
+  String avancement;
   String date;
   String vipOrNot;
   Color theColor;
@@ -63,10 +68,49 @@ class NosProduitsState extends State<NosProduit> {
   Color topNavSelected1 = Colors.lightBlue;
   Color topNavSelected2 = Colors.grey;
   Color topNavSelected3 = Colors.grey;
+  // List docs = [];
+  // final CollectionReference databaseRef =
+  //     FirebaseFirestore.instance.collection('products');
+  // Future<List> read() async {
+  //   QuerySnapshot querySnapshot;
+  //   List docs = [];
+  //   try {
+  //     querySnapshot = await databaseRef.get();
+  //     if (querySnapshot.docs.isNotEmpty) {
+  //       for (var doc in querySnapshot.docs.toList()) {
+  //         Map a = {
+  //           "nomProduit": doc['nomProduit'],
+  //           "imageProduit": doc['imageProduit'],
+  //           "avancement": doc["avancement"],
+  //           "date": doc['date']
+  //         };
+  //         docs.add(a);
+  //       }
+  //       return docs;
+  //     }
+  //     return docs;
+  //   } catch (e) {
+  //     return docs;
+  //   }
+  // }
 
   void initState() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {});
+    // read().then((value) => setState(() {
+    //       docs = value;
+    //     }));
   }
+  //----------------
+  //-----------------
+
+//------------
+//------------
+
+  RxInt count = 200.obs;
+  RxString nom = "".obs;
+  RxString image = "".obs;
+  RxString avance = "".obs;
+  RxString dateDate = "".obs;
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +240,7 @@ class NosProduitsState extends State<NosProduit> {
             ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Container(
-                  width: avancement,
+                  width: double.parse(avancement),
                   height: 28,
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -222,7 +266,8 @@ class NosProduitsState extends State<NosProduit> {
             Positioned(
               top: 4,
               left: 38,
-              child: Text('${((avancement / 100) * 100).toStringAsFixed(0)}%'),
+              child: Text(
+                  '${((double.parse(avancement) / 100) * 100).toStringAsFixed(0)}%'),
             ),
           ])
         ]),
@@ -244,7 +289,7 @@ class NosProduitsState extends State<NosProduit> {
                 Column(
                   children: [
                     Row(children: [
-                      Text("Prix de magasin", style: TextStyle(fontSize: 12)),
+                      Text("Prix magazin", style: TextStyle(fontSize: 12)),
                       Container(width: (30 / 360) * w)
                     ]),
                     SizedBox(
@@ -315,7 +360,18 @@ class NosProduitsState extends State<NosProduit> {
 //----------------
 
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            count = count - 6;
+            modifierMontant(count);
+            modifierAvancement(productID);
+            RxMap<String, String> documentData = {'avancement': "45"}.obs;
+            // RxString image = "".obs;
+            // RxString avance = "".obs;
+            // RxString dateDate = "".obs;
+
+            modifierEncheres(productID, " docs[0]['nomProduit']",
+                image.toString(), avance.toString(), dateDate.toString());
+          },
           child: Container(
             width: 185,
             child: Text(
@@ -332,9 +388,54 @@ class NosProduitsState extends State<NosProduit> {
               ))),
         ),
         SizedBox(height: 10),
+        StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return new Text("Loading");
+              }
+              DocumentSnapshot<Object?> documentData =
+                  snapshot.data as DocumentSnapshot;
+              //return new Text(documentData['avancement'].toString());
+              return Text(documentData['montant'].toString());
+            }),
+        StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return new Text("Loading");
+              }
+              DocumentSnapshot<Object?> documentData =
+                  snapshot.data as DocumentSnapshot;
+              count = RxInt(int.parse(documentData['montant'])) as RxInt;
+              return Text(count.toString());
+            })
+
 //---------------
       ]),
     ]);
+  }
+
+  void modifierMontant(RxInt montant) {
+    DatabaseService ds = DatabaseService(uid: uid);
+    ds.updateMontant(montant);
+  }
+
+  void modifierAvancement(String productID) {
+    DatabaseService ds = DatabaseService(uid: uid);
+    ds.updateAvancement(productID);
+  }
+
+  void modifierEncheres(String productID, String nomProduit,
+      String imageProduit, String avancement, String date) {
+    DatabaseService ds = DatabaseService(uid: uid);
+    ds.updateEncheres(productID, nomProduit, imageProduit, avancement, date);
   }
 }
 

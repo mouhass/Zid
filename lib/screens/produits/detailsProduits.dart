@@ -23,7 +23,7 @@ class detailsProduit extends StatefulWidget {
   Color theColor;
   String vipOrNot;
   String date;
-  double avancement;
+  String avancement;
   String nomProduit;
   detailsProduit(
       {required this.uid,
@@ -50,7 +50,7 @@ class lesDetails extends State<detailsProduit> {
   Color theColor;
   String vipOrNot;
   String date;
-  double avancement;
+  String avancement;
   String nomProduit;
 
   lesDetails(
@@ -253,7 +253,7 @@ class lesDetails extends State<detailsProduit> {
                 ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Container(
-                      width: (avancement / 360) * w,
+                      width: (double.parse(avancement) / 360) * w,
                       height: 28,
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -279,8 +279,8 @@ class lesDetails extends State<detailsProduit> {
                 Positioned(
                   top: 4,
                   left: (38 / 360) * w,
-                  child:
-                      Text('${((avancement / 70) * 100).toStringAsFixed(0)}%'),
+                  child: Text(
+                      '${((double.parse(avancement) / 70) * 100).toStringAsFixed(0)}%'),
                 ),
               ]),
               Container(width: 20),

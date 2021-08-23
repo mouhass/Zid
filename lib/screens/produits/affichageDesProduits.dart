@@ -2,9 +2,8 @@ import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:zid/model/Products.dart';
+
 import 'package:zid/screens/produits/nosProduits.dart';
-import 'package:zid/services/database.dart';
 
 class AfficherProduits extends StatefulWidget {
   String uid;
@@ -60,7 +59,7 @@ class AfficherProduitsState extends State<AfficherProduits> {
                           theColor: Colors.yellow,
                           vipOrNot: 'assets/Groupe 484@1X.png',
                           date: documentData['date'],
-                          avancement: documentData['avancement'].toDouble(),
+                          avancement: documentData['avancement'],
                           nomProduit: "HUAWEI SMART WATCH GT2",
                         );
                       }),
@@ -84,7 +83,7 @@ class AfficherProduitsState extends State<AfficherProduits> {
                           theColor: Colors.white,
                           vipOrNot: 'assets/Groupe.png',
                           date: documentData['date'],
-                          avancement: documentData['avancement'].toDouble(),
+                          avancement: documentData['avancement'],
                           nomProduit: "REDMI 7A BLACK",
                         );
                       }),
@@ -108,7 +107,7 @@ class AfficherProduitsState extends State<AfficherProduits> {
                           theColor: Colors.white,
                           vipOrNot: 'assets/Groupe.png',
                           date: documentData['date'],
-                          avancement: documentData['avancement'].toDouble(),
+                          avancement: documentData['avancement'],
                           nomProduit: "HUAWEI SMART WATCH GT2",
                         );
                       }),

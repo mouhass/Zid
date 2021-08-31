@@ -1,21 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:zid/services/database.dart';
 
-class Jeton extends StatelessWidget {
+class Jeton extends StatefulWidget {
+  String uid;
   String theImage;
   Color couleurDuPrix = Colors.white;
   Color myColor = Colors.white;
   int prix;
   String vip;
-  Jeton({
-    required this.theImage,
-    required this.couleurDuPrix,
-    required this.myColor,
-    required this.prix,
-    required this.vip,
-  });
+  int nombrePacket;
+  Jeton(
+      {required this.uid,
+      required this.theImage,
+      required this.couleurDuPrix,
+      required this.myColor,
+      required this.prix,
+      required this.vip,
+      required this.nombrePacket});
+  State<StatefulWidget> createState() => JetonState(
+      uid: this.uid,
+      theImage: this.theImage,
+      couleurDuPrix: this.couleurDuPrix,
+      myColor: this.myColor,
+      prix: this.prix,
+      vip: this.vip,
+      nombrePacket: this.nombrePacket);
+}
+
+class JetonState extends State<Jeton> {
+  String uid;
+  String theImage;
+  Color couleurDuPrix = Colors.white;
+  Color myColor = Colors.white;
+  int prix;
+  String vip;
+  int nombrePacket;
+  JetonState(
+      {required this.uid,
+      required this.theImage,
+      required this.couleurDuPrix,
+      required this.myColor,
+      required this.prix,
+      required this.vip,
+      required this.nombrePacket});
+
+  List userData = [];
+  final CollectionReference userbaseRef =
+      FirebaseFirestore.instance.collection('users');
+
+  Future<List> read() async {
+    QuerySnapshot querySnapshot;
+    List docs = [];
+    try {
+      querySnapshot = await userbaseRef.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs.toList()) {
+          Map a = {
+            "id": doc.id,
+            "montant": doc['montant'],
+            "nombreJetons": doc['nombreJetons']
+          };
+          docs.add(a);
+        }
+        return docs;
+      }
+      return docs;
+    } catch (e) {
+      return docs;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      read().then((value) => setState(() {
+            userData = value;
+          }));
+    });
     return Container(
         child: Stack(children: [
       Row(children: [
@@ -53,7 +115,15 @@ class Jeton extends StatelessWidget {
               height: 5,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                for (int i = 0; i < userData.length; i++) {
+                  if (userData[i]['id'] == uid &&
+                      int.parse(userData[i]['montant']) - prix > 0) {
+                    modifications(prix, nombrePacket,
+                        userData[i]['nombreJetons'], userData[i]['montant']);
+                  }
+                }
+              },
               child: Row(children: [
                 Icon(
                   Icons.shopping_cart_outlined,
@@ -76,5 +146,11 @@ class Jeton extends StatelessWidget {
         ],
       )
     ]));
+  }
+
+  void modifications(
+      int prix, int nbrePacket, String nombreJetons, String montant) {
+    DatabaseService ds = DatabaseService(uid: uid);
+    ds.updateNbreJetonsMontant(prix, nbrePacket, nombreJetons, montant);
   }
 }

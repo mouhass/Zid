@@ -40,39 +40,100 @@ class DatabaseService {
         .update({'montant': montant.toString()});
   }
 
-  Future updateAvancement(String productsID) async {
+  Future updateAvancement(String productsID, String avancement) async {
     CollectionReference productsCollection =
         FirebaseFirestore.instance.collection('products');
 
     return await productsCollection
         .doc(productsID)
-        .update({'avancement': '67'});
+        .update({'avancement': avancement});
   }
-
-  // Future updateEncheres(String productID) async {
-  //   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  //   return await users.doc
-  // }
 
   Future updateEncheres(String productID, String nomProduit,
       String imageProduit, String avancement, String date) async {
-    Users user = Users(
-        UserFirstName: "UserFirstName",
-        UserLastName: "UserLastName",
-        region: "region",
-        email: "email",
-        password: "password",
-        numeroTel: 0,
-        pseudo: "pseudo",
-        listEncheres: [],
-        listFavoris: []);
-    return await usersCollection.doc(uid).update({
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return await users.doc(uid).update({
       "encheres": FieldValue.arrayUnion([
-        user.encheresItems(imageProduit.toString(), nomProduit.toString(),
-            date.toString(), avancement.toString())
+        {
+          "productID": productID,
+          "imageProduit": imageProduit.toString(),
+          'nomProduit': nomProduit.toString(),
+          "date": date.toString(),
+          "avancement": avancement.toString(),
+        }
       ])
-    }).then((_) {
-      print('Transaction  committed.');
+    });
+  }
+
+  void updateEnCours(String imageProduit, String nomProduit) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return await users.doc(uid).update({
+      "enCours": FieldValue.arrayUnion([
+        {"imageProduit": imageProduit, "nomProduit": nomProduit}
+      ])
+    });
+  }
+
+  void encher(String valeur, String valeurEnCours) async {
+    CollectionReference products =
+        FirebaseFirestore.instance.collection('products');
+    return await products.doc("nMisolzNVKDPSCAArsAP").update({
+      "prixEnCours": (double.parse(valeur) + double.parse(valeurEnCours))
+          .toStringAsFixed(1)
+    });
+  }
+
+  void modifierJeton(String nbreJetons) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return await users
+        .doc(uid)
+        .update({"nombreJetons": (int.parse(nbreJetons) - 1).toString()});
+  }
+
+  void updateNbreJetonsMontant(
+      int prix, int nbrePacket, String nombreJetons, String montant) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return await users.doc(uid).update({
+      "nombreJetons": (nbrePacket + int.parse(nombreJetons)).toString(),
+      "montant": (int.parse(montant) - prix).toString()
+    });
+  }
+
+  void terimerEnchere() async {
+    CollectionReference products =
+        FirebaseFirestore.instance.collection('products');
+
+    return await products
+        .doc("nMisolzNVKDPSCAArsAP")
+        .update({"estTermine": true});
+  }
+
+  void addToPileEnchere(
+      String prixEnCours, String prenom, String nom, String currentDate) async {
+    CollectionReference products =
+        FirebaseFirestore.instance.collection('products');
+    return await products.doc("nMisolzNVKDPSCAArsAP").update({
+      "pileEnchere": FieldValue.arrayUnion([
+        {
+          "prixEnCours": prixEnCours,
+          "nom": nom,
+          "prenom": prenom,
+          "currentDate": currentDate
+        }
+      ])
+    });
+  }
+
+  void termine(String nomProduit, String imageProduit, String nomGagnant,
+      String prenomGagnant, String prixFinal) async {
+    CollectionReference termine =
+        FirebaseFirestore.instance.collection('termine');
+    termine.add({
+      "nomProduit": nomProduit,
+      "imageProduit": imageProduit,
+      "nomGagnant": nomGagnant,
+      "prenomGagnant": prenomGagnant,
+      "prixFinal": prixFinal
     });
   }
 }

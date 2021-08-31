@@ -141,46 +141,6 @@ class deatilsEncheresState extends State<deatilsEncheres> {
                     )),
               ),
               SizedBox(width: 8),
-              Stack(children: [
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Container(
-                        width: (70 / 360) * w,
-                        height: 28,
-                        color: Colors.grey[300])),
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Container(
-                      width: double.parse(avancement),
-                      height: 28,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0XFFC772FF),
-                          Colors.white,
-                        ],
-                      )),
-                    )),
-                //----------------------------------------------
-
-                Positioned(
-                  top: 3,
-                  left: 5,
-                  child: Image(
-                    image: AssetImage('assets/Groupe 457@1X.png'),
-                    width: (20 / 360) * w,
-                    height: 20,
-                  ),
-                ),
-                Positioned(
-                  top: 4,
-                  left: 38,
-                  child: Text(
-                      '${((double.parse(avancement) / 70) * 100).toStringAsFixed(0)}%'),
-                ),
-              ])
             ]),
             SizedBox(
               height: 12,

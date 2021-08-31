@@ -14,103 +14,89 @@ class AfficherProduits extends StatefulWidget {
 class AfficherProduitsState extends State<AfficherProduits> {
   String uid;
   AfficherProduitsState({required this.uid});
-  CollectionReference products =
+  // CollectionReference products =
+  //     FirebaseFirestore.instance.collection('products');
+  // List<String> productsID = [
+  //   "6M0mzdg52Wbr8bgR533B",
+  //   "Cj86NqxvEDbC4Tp2emBA",
+  //   "nMisolzNVKDPSCAArsAP"
+  // ];
+
+  // FirebaseFirestore? _instance;
+
+  // Stream<QuerySnapshot> readItems() {
+  //   CollectionReference notesItemCollection =
+  //       _instance!.doc("nMisolzNVKDPSCAArsAP").collection('products');
+
+  //   return notesItemCollection.snapshots();
+  // }
+
+  List docs = [];
+  final CollectionReference databaseRef =
       FirebaseFirestore.instance.collection('products');
-  List<String> productsID = [
-    "6M0mzdg52Wbr8bgR533B",
-    "Cj86NqxvEDbC4Tp2emBA",
-    "nMisolzNVKDPSCAArsAP"
-  ];
-
-  FirebaseFirestore? _instance;
-
-  Stream<QuerySnapshot> readItems() {
-    CollectionReference notesItemCollection =
-        _instance!.doc("nMisolzNVKDPSCAArsAP").collection('products');
-
-    return notesItemCollection.snapshots();
+  Future<List> read() async {
+    QuerySnapshot querySnapshot;
+    List docs = [];
+    try {
+      querySnapshot = await databaseRef.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs.toList()) {
+          Map a = {
+            "productID": doc.id,
+            "color": doc['theColors'],
+            "nomProduit": doc['nomProduit'],
+            "imageProduit": doc['imageProduit'],
+            "avancement": doc["avancement"],
+            "date": doc['date']
+          };
+          docs.add(a);
+        }
+        return docs;
+      }
+      return docs;
+    } catch (e) {
+      return docs;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      read().then((value) => setState(() {
+            docs = value;
+          }));
+    });
     return SingleChildScrollView(
         child: Container(
             color: Colors.white,
             child: Padding(
                 padding: EdgeInsets.all(5),
                 child: Column(children: [
-                  //------------------------------
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('products')
-                          .doc('6M0mzdg52Wbr8bgR533B')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Text("Loading");
-                        }
-                        DocumentSnapshot<Object?> documentData =
-                            snapshot.data as DocumentSnapshot;
-                        //return new Text(documentData['avancement'].toString());
-                        return NosProduit(
-                          uid: uid,
-                          productID: productsID[0],
-                          imageProduit: 'assets/smartWatch.png',
-                          theColor: Colors.yellow,
-                          vipOrNot: 'assets/Groupe 484@1X.png',
-                          date: documentData['date'],
-                          avancement: documentData['avancement'],
-                          nomProduit: "HUAWEI SMART WATCH GT2",
-                        );
-                      }),
+                  for (int i = 0; i < docs.length; i++)
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('products')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return new Text("Loading");
+                          }
 
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('products')
-                          .doc('Cj86NqxvEDbC4Tp2emBA')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Text("Loading");
-                        }
-                        DocumentSnapshot<Object?> documentData =
-                            snapshot.data as DocumentSnapshot;
-                        //return new Text(documentData['avancement'].toString());
-                        return NosProduit(
-                          uid: uid,
-                          productID: productsID[1],
-                          imageProduit: 'assets/modifiedphone.png',
-                          theColor: Colors.white,
-                          vipOrNot: 'assets/Groupe.png',
-                          date: documentData['date'],
-                          avancement: documentData['avancement'],
-                          nomProduit: "REDMI 7A BLACK",
-                        );
-                      }),
-
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('products')
-                          .doc('nMisolzNVKDPSCAArsAP')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Text("Loading");
-                        }
-                        DocumentSnapshot<Object?> documentData =
-                            snapshot.data as DocumentSnapshot;
-                        //return new Text(documentData['avancement'].toString());
-                        return NosProduit(
-                          uid: uid,
-                          productID: productsID[2],
-                          imageProduit: 'assets/smartWatch.png',
-                          theColor: Colors.white,
-                          vipOrNot: 'assets/Groupe.png',
-                          date: documentData['date'],
-                          avancement: documentData['avancement'],
-                          nomProduit: "HUAWEI SMART WATCH GT2",
-                        );
-                      }),
+                          Color otherColor = Colors.red;
+                          //return new Text(documentData['avancement'].toString());
+                          return NosProduit(
+                            uid: uid,
+                            productID: docs[i]['productID'],
+                            imageProduit: docs[i]['imageProduit'],
+                            theColor: Color(int.parse(
+                                docs[i]['color'].split('0x')[1],
+                                radix: 16)),
+                            vipOrNot: 'assets/Groupe 484@1X.png',
+                            date: docs[i]['date'],
+                            avancement: docs[i]['avancement'],
+                            nomProduit: docs[i]['nomProduit'],
+                          );
+                        }),
 
                   //------------------------------
                 ]))));

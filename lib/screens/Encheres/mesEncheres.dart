@@ -32,81 +32,89 @@ class MesEncheresState extends State<MesEncheres> {
                 },
               ),
             ]),
-        body: Padding(
-            padding: EdgeInsets.all(5),
-            child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  SizedBox(height: 20),
-                  Row(children: [
-                    SizedBox(width: 14),
-                    Text("Mes enchères",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
-                  ]),
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(uid)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Text("Loading");
-                        }
-                        DocumentSnapshot<Object?> documentData =
-                            snapshot.data as DocumentSnapshot;
+        body: Container(
+            color: Colors.white,
+            child: Padding(
+                padding: EdgeInsets.all(5),
+                child: SingleChildScrollView(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      SizedBox(height: 20),
+                      Row(children: [
+                        SizedBox(width: 14),
+                        Text("Mes enchères",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                      ]),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uid)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return new Text("Loading");
+                            }
+                            DocumentSnapshot<Object?> documentData =
+                                snapshot.data as DocumentSnapshot;
 
-                        if (documentData['encheres'] != null) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              for (var x = 0;
-                                  x < documentData['encheres'].length;
-                                  x++)
-                                Column(children: <Widget>[
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  deatilsEncheres(
-                                    imageProduit: documentData['encheres'][x]
-                                        ['imageProduit'],
-                                    nomProduit: documentData['encheres'][x]
-                                        ['nomProduit'],
-                                    date: documentData['encheres'][x]['date'],
-                                    avancement: documentData['encheres'][x]
-                                            ['avancement']
-                                        .toString(),
-                                  )
-                                ])
-                            ],
-                          );
-                        } else {
-                          return Center(
-                              child:
-                                  Stack(alignment: Alignment.center, children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(80),
-                                child: Container(
-                                    height: 66,
-                                    width: 63,
-                                    color: Colors.white)),
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(80),
-                                child: Container(
-                                    height: 50,
-                                    width: 50,
-                                    color: Colors.red.shade300)),
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(80),
-                                child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    color: Colors.red.shade100)),
-                            Icon(Icons.notifications, color: Colors.grey)
-                          ]));
-                        }
-                      }),
-                ])))));
+                            if (documentData['encheres'].length != 0) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  for (var x = 0;
+                                      x < documentData['encheres'].length;
+                                      x++)
+                                    Column(children: <Widget>[
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      deatilsEncheres(
+                                          imageProduit: documentData['encheres']
+                                              [x]['imageProduit'],
+                                          nomProduit: documentData['encheres']
+                                              [x]['nomProduit'],
+                                          date: documentData['encheres'][x]
+                                              ['date'],
+                                          avancement: documentData['encheres']
+                                              [x]['avancement'])
+                                    ])
+                                ],
+                              );
+                            } else {
+                              return Center(
+                                  child: Column(children: [
+                                Stack(alignment: Alignment.center, children: [
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(80),
+                                      child: Container(
+                                          height: 66,
+                                          width: 63,
+                                          color: Colors.white)),
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(80),
+                                      child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          color: Colors.red.shade300)),
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(80),
+                                      child: Container(
+                                          height: 55,
+                                          width: 55,
+                                          color: Colors.red.shade100)),
+                                  Icon(Icons.notifications, color: Colors.grey)
+                                ]),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Center(
+                                    child: Text("Vous n'avez pas d'enchères",
+                                        style: TextStyle(color: Colors.red)))
+                              ]));
+                            }
+                          }),
+                    ]))))));
   }
 }

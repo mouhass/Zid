@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:date_count_down/date_count_down.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -48,7 +47,6 @@ class deatilsFavorisState extends State<deatilsFavoris> {
 
   @override
   Widget build(BuildContext context) {
-    countTime = CountDown().timeLeft(DateTime.parse(date), "terminé");
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Row(children: <Widget>[
@@ -108,75 +106,6 @@ class deatilsFavorisState extends State<deatilsFavoris> {
         )
       ]),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Row(children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Container(
-                height: 28,
-                width: (116 / 360) * w,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0XFF30A6CA),
-                    Colors.lightBlue.shade100,
-                  ],
-                )),
-                child: Row(
-                  children: [
-                    SizedBox(width: 4),
-                    Image(
-                        image: AssetImage('assets/Icon material-timelapse.png'),
-                        width: (18 / 360) * w),
-                    SizedBox(width: 4),
-                    Text(countTime,
-                        style:
-                            const TextStyle(fontSize: 11, color: Colors.white)),
-                  ],
-                )),
-          ),
-          SizedBox(width: 8),
-          Stack(children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Container(
-                    width: (70 / 360) * w,
-                    height: 28,
-                    color: Colors.grey[300])),
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Container(
-                  width: avancement,
-                  height: 28,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0XFFC772FF),
-                      Colors.white,
-                    ],
-                  )),
-                )),
-            //----------------------------------------------
-
-            Positioned(
-              top: 3,
-              left: 5,
-              child: Image(
-                image: AssetImage('assets/Groupe 457@1X.png'),
-                width: (20 / 360) * w,
-                height: 20,
-              ),
-            ),
-            Positioned(
-              top: 4,
-              left: 38,
-              child: Text('${((avancement / 70) * 100).toStringAsFixed(0)}%'),
-            ),
-          ])
-        ]),
         SizedBox(
           height: 12,
         ),
@@ -184,7 +113,8 @@ class deatilsFavorisState extends State<deatilsFavoris> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              Text(nomProduit, style: TextStyle(fontSize: 13)),
+              Text(nomProduit,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
               Container(width: (30 / 360) * w)
             ]),
             SizedBox(
@@ -201,7 +131,12 @@ class deatilsFavorisState extends State<deatilsFavoris> {
                     SizedBox(
                       height: 12,
                     ),
-                    Row(children: [Text("899DT"), Container(width: 77)])
+                    Row(children: [
+                      Text("899DT",
+                          style: TextStyle(
+                              decoration: TextDecoration.lineThrough)),
+                      Container(width: 77)
+                    ])
                   ],
                 ),
                 Column(

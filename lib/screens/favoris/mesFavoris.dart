@@ -40,7 +40,7 @@ class MesFavorisState extends State<MesFavoris> {
                       SizedBox(height: 20),
                       Row(children: [
                         SizedBox(width: 14),
-                        Text("Mes enchères",
+                        Text("Mes favoris",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20)),
                       ]),
@@ -48,13 +48,13 @@ class MesFavorisState extends State<MesFavoris> {
                         imageProduit: 'assets/smartWatch.png',
                         nomProduit: "HUAWEI SMART WATCH GT2",
                         date: "2021-07-21",
-                        avancement: 45.5,
+                        avancement: 17,
                       ),
                       deatilsFavoris(
                         imageProduit: 'assets/modifiedphone.png',
                         nomProduit: "REDMI 7A BLACK",
                         date: "2021-07-22",
-                        avancement: 14,
+                        avancement: 23,
                       ),
                     ]))))));
   }

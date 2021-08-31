@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zid/screens/produits/detailsProduitEnDirect.dart';
 import 'package:zid/screens/home/pageSpeciale.dart';
@@ -5,14 +6,36 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ProduitsEnCours extends StatefulWidget {
+  String imageProduit;
+  String nomProduit;
+  String uid;
+  String date;
+  ProduitsEnCours(
+      {required this.uid,
+      required this.imageProduit,
+      required this.nomProduit,
+      required this.date});
   @override
-  EnCours createState() => EnCours();
+  EnCours createState() => EnCours(
+        uid: this.uid,
+        imageProduit: this.imageProduit,
+        nomProduit: this.nomProduit,
+        date: this.date,
+      );
 }
 
 class EnCours extends State<ProduitsEnCours> {
   String valeurDeLimage = "img.png";
-  String nomProduit = "HUAWEI SMART WATCH GT2";
-  String imageProduit = "assets/smartWatch.png";
+  String imageProduit;
+  String nomProduit;
+  String uid;
+  String date;
+  EnCours({
+    required this.uid,
+    required this.imageProduit,
+    required this.nomProduit,
+    required this.date,
+  });
 
   @override
   void initState() {
@@ -21,7 +44,7 @@ class EnCours extends State<ProduitsEnCours> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Container(
         child: Column(
       children: [
         Stack(
@@ -38,11 +61,15 @@ class EnCours extends State<ProduitsEnCours> {
                     color: Colors.transparent,
                     child: GestureDetector(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => DetailsProduitDirect()),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => detailsProduitDirect(
+                                    uid: uid,
+                                    imageProduit: imageProduit,
+                                    nomProduit: nomProduit,
+                                  )),
+                        );
                       },
                       child: Container(
                         child: ClipRRect(

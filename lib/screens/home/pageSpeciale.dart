@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_count_down/date_count_down.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:zid/screens/home/afficherEnCours.dart';
 import 'package:zid/screens/produits/affichageDesProduits.dart';
 import 'package:zid/screens/profile/monProfile.dart';
 
@@ -31,6 +32,7 @@ class nouvellePage extends State<pageSpeciale> {
 
   int SelectedItem = 0;
   //String NouvelCouleurDuCoeur = "image1.png";
+
   @override
   void initState() {
     super.initState();
@@ -41,8 +43,8 @@ class nouvellePage extends State<pageSpeciale> {
 
   @override
   Widget build(BuildContext context) {
-    // String date;
-    // int participants;
+    setState(() {});
+
     RxInt count = 200.obs;
     countTime = CountDown().timeLeft(DateTime.parse("2021-07-21"), "completed");
     return DefaultTabController(
@@ -104,8 +106,8 @@ class nouvellePage extends State<pageSpeciale> {
                 AfficherProduits(
                   uid: uid,
                 ),
-                ProduitsEnCours(),
-                ProduitsTermines(),
+                AffichageEnCours(uid: uid),
+                ProduitsTermines(uid: uid),
               ],
             )));
   }

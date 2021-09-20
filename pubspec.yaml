@@ -46,7 +46,7 @@ dependencies:
   flutter_countdown_timer: ^4.1.0
   intl: ^0.17.0
   circular_countdown_timer: ^0.2.0
-
+  telephony: ^0.1.4
   
 flutter_native_splash:
   color: "#FFE3CE"

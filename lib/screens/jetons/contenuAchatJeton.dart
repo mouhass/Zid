@@ -1,28 +1,62 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zid/screens/jetons/jeton.dart';
 import 'package:zid/screens/profile/monProfile.dart';
 
-class ContenuAchatJeton extends StatelessWidget {
+class ContenuAchatJeton extends StatefulWidget {
   String uid;
   ContenuAchatJeton({required this.uid});
+  State<StatefulWidget> createState() => ContenuAchatJetonState(uid: uid);
+}
+
+class ContenuAchatJetonState extends State<ContenuAchatJeton> {
+  String uid;
+  ContenuAchatJetonState({required this.uid});
+  List userData = [];
+  final CollectionReference userbaseRef =
+      FirebaseFirestore.instance.collection('users');
+  Future<List> read() async {
+    QuerySnapshot querySnapshot;
+    List docs = [];
+    try {
+      querySnapshot = await userbaseRef.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs.toList()) {
+          Map a = {
+            "id": doc.id,
+            "nom": doc["firstName"],
+            "prenom": doc["secondName"]
+          };
+          docs.add(a);
+        }
+        return docs;
+      }
+      return docs;
+    } catch (e) {
+      return docs;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      read().then((value) => setState(() {
+            userData = value;
+          }));
+    });
+    int idUser = 0;
+    for (int i = 0; i < userData.length; i++) {
+      if (userData[i]['id'] == uid) {
+        idUser = i;
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Image(image: AssetImage('assets/Logo@1X.png')),
-            backgroundColor: Colors.white,
-            actions: [
-              IconButton(
-                icon: Image.asset('assets/avatar.png'),
-                color: Colors.orange,
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return MonProfile(uid: uid);
-                  }));
-                },
-              ),
-            ]),
+          automaticallyImplyLeading: false,
+          title: Image(image: AssetImage('assets/Logo@1X.png')),
+          backgroundColor: Colors.white,
+        ),
         body: Container(
           child: SingleChildScrollView(
               child: Column(

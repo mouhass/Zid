@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:zid/screens/home/enCours.dart';
+import 'package:zid/services/database.dart';
 
 class AffichageEnCours extends StatefulWidget {
   String uid;
@@ -11,14 +12,22 @@ class AffichageEnCours extends StatefulWidget {
 class AffichageEnCoursState extends State<AffichageEnCours> {
   String uid;
   AffichageEnCoursState({required this.uid});
-  List docs = [];
-  final CollectionReference databaseRef =
+  void addEnCours(String imageProduit, String nomProduit) {
+    DatabaseService ds = DatabaseService(uid: uid);
+    ds.updateEnCours(imageProduit, nomProduit);
+  }
+
+  List userData = [];
+  final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
-  Future<List> read() async {
+  final CollectionReference products =
+      FirebaseFirestore.instance.collection('Products');
+
+  Future<List> readUsers() async {
     QuerySnapshot querySnapshot;
     List docs = [];
     try {
-      querySnapshot = await databaseRef.get();
+      querySnapshot = await users.get();
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs.toList()) {
           Map a = {
@@ -39,22 +48,24 @@ class AffichageEnCoursState extends State<AffichageEnCours> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      read().then((value) => setState(() {
-            docs = value;
+      readUsers().then((value) => setState(() {
+            userData = value;
           }));
     });
+
     return Scaffold(
         body: SingleChildScrollView(
       child: Column(children: [
-        for (int i = 0; i < docs.length; i++)
-          if (docs[i]['id'] == uid)
-            for (int j = 0; j < docs[i]['enCours'].length; j++)
+        for (int i = 0; i < userData.length; i++)
+          if (userData[i]['id'] == uid)
+            for (int j = 0; j < userData[i]['enCours'].length; j++)
               ProduitsEnCours(
                   uid: uid,
                   imageProduit:
-                      docs[i]['enCours'][j]['imageProduit'].toString(),
-                  nomProduit: docs[i]['enCours'][j]['nomProduit'].toString(),
-                  date: docs[i]['enCours'][j]['date'].toString())
+                      userData[i]['enCours'][j]['imageProduit'].toString(),
+                  nomProduit:
+                      userData[i]['enCours'][j]['nomProduit'].toString(),
+                  date: userData[i]['enCours'][j]['date'].toString())
       ]),
     ));
   }

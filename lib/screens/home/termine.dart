@@ -52,24 +52,25 @@ class termine extends State<ProduitsTermines> {
         child: Container(
             color: Colors.white,
             child: Column(children: [
-              Text(docs.toString()),
-              ProduitFini(
-                imageProduit:
-                    'assets/JBL_Flip5_Product Photo_Hero_Ocean Blue@1X.png',
-                nomProduit: "JBL FLIP4",
-                quiRemporte: "Zizou2001",
-              ),
-              ProduitFini(
-                imageProduit: 'assets/smartWatch.png',
-                nomProduit: "HUAWEI SMART WATCH GT2",
-                quiRemporte: "Foulen",
-              ),
-              ProduitFini(
-                imageProduit:
-                    'assets/JBL_Flip5_Product Photo_Hero_Ocean Blue@1X.png',
-                nomProduit: "JBL FLIP4",
-                quiRemporte: "Zizou2001",
-              ),
+              // Text(docs.toString()),
+              for (int i = 0; i < docs.length; i++)
+                ProduitFini(
+                  imageProduit: docs[i]['imageProduit'],
+                  nomProduit: docs[i]['nomProduit'],
+                  quiRemporte:
+                      docs[i]['nomGagnant'] + ' ' + docs[i]['prenomGagnant'],
+                ),
+              // ProduitFini(
+              //   imageProduit: 'assets/smartWatch.png',
+              //   nomProduit: "HUAWEI SMART WATCH GT2",
+              //   quiRemporte: "Foulen",
+              // ),
+              // ProduitFini(
+              //   imageProduit:
+              //       'assets/JBL_Flip5_Product Photo_Hero_Ocean Blue@1X.png',
+              //   nomProduit: "JBL FLIP4",
+              //   quiRemporte: "Zizou2001",
+              // ),
             ])));
   }
 }

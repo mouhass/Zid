@@ -5,6 +5,7 @@ import 'package:date_count_down/date_count_down.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zid/screens/home/afficherEnCours.dart';
+import 'package:zid/screens/home/secondScreen.dart';
 import 'package:zid/screens/produits/affichageDesProduits.dart';
 import 'package:zid/screens/profile/monProfile.dart';
 
@@ -41,9 +42,44 @@ class nouvellePage extends State<pageSpeciale> {
     });
   }
 
+  List userData = [];
+  final CollectionReference userbaseRef =
+      FirebaseFirestore.instance.collection('users');
+  Future<List> read() async {
+    QuerySnapshot querySnapshot;
+    List docs = [];
+    try {
+      querySnapshot = await userbaseRef.get();
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs.toList()) {
+          Map a = {
+            "id": doc.id,
+            "nom": doc["firstName"],
+            "prenom": doc["secondName"]
+          };
+          docs.add(a);
+        }
+        return docs;
+      }
+      return docs;
+    } catch (e) {
+      return docs;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    setState(() {});
+    setState(() {
+      read().then((value) => setState(() {
+            userData = value;
+          }));
+    });
+    int idUser = 0;
+    for (int i = 0; i < userData.length; i++) {
+      if (userData[i]['id'] == uid) {
+        idUser = i;
+      }
+    }
 
     RxInt count = 200.obs;
     countTime = CountDown().timeLeft(DateTime.parse("2021-07-21"), "completed");
@@ -82,8 +118,9 @@ class nouvellePage extends State<pageSpeciale> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return MonProfile(
-                          uid: uid,
-                        );
+                            uid: uid,
+                            nom: userData[idUser]['nom'],
+                            prenom: userData[idUser]['prenom']);
                       }));
                     },
                   ),

@@ -74,7 +74,7 @@ class DatabaseService {
     });
   }
 
-  void encher(String valeur, String valeurEnCours) async {
+  void encher(String valeur, String valeurEnCours, String productID) async {
     CollectionReference products =
         FirebaseFirestore.instance.collection('products');
     return await products.doc("nMisolzNVKDPSCAArsAP").update({
@@ -135,5 +135,10 @@ class DatabaseService {
       "prenomGagnant": prenomGagnant,
       "prixFinal": prixFinal
     });
+  }
+
+  void deleteUserWithGivenID(String idUser) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    return await users.doc(idUser).delete();
   }
 }

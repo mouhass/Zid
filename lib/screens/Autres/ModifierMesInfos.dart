@@ -147,11 +147,7 @@ class ModifierMesInfosState extends State<ModifierMesInfos> {
             size: 24.0,
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return MonProfile(
-                uid: uid,
-              );
-            }));
+            Navigator.pop(context);
           },
         ),
       ),

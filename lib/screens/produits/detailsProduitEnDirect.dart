@@ -55,6 +55,7 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs.toList()) {
           Map a = {
+            "id": doc.id,
             "date": doc['date'],
             "prixEnCours": doc['prixEnCours'],
             "estTermine": doc['estTermine'],
@@ -81,6 +82,7 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs.toList()) {
           Map a = {
+            "id": doc.id,
             "nombreJetons": doc['nombreJetons'],
             "prenom": doc['firstName'],
             "nom": doc['secondName']
@@ -100,6 +102,7 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
     super.initState();
   }
 
+  int idUser = 0;
   @override
   Widget build(BuildContext context) {
     setState(() {
@@ -109,6 +112,12 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
       read().then((value) => setState(() {
             docs = value;
           }));
+
+      for (int i = 0; i < userList.length; i++) {
+        if (userList[i]["id"] == uid) {
+          idUser = i;
+        }
+      }
     });
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
@@ -273,7 +282,9 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
                                 children: [
                                   Text("Nombre des jetons"),
                                   Text("disponsibles"),
-                                  Text(userList[0]['nombreJetons'].toString(),
+                                  Text(
+                                      userList[idUser]['nombreJetons']
+                                          .toString(),
                                       style: TextStyle(
                                           color: Colors.lightBlue,
                                           fontWeight: FontWeight.bold,
@@ -336,13 +347,14 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
                         onPressed: () {
                           DateTime now = DateTime.now();
 
-                          if (userList[0]['nombreJetons'] != "0" &&
-                              docs[2]['estTermine'] == false) {
-                            encherire("0.1", docs[2]['prixEnCours']);
+                          if (userList[idUser]['nombreJetons'] != "0" &&
+                              docs[idUser]['estTermine'] == false) {
+                            encherire("0.1", docs[2]['prixEnCours'],
+                                docs[idUser]["id"]);
                             addContributionToPile(
-                                docs[2]['prixEnCours'],
-                                userList[0]['prenom'],
-                                userList[0]['nom'],
+                                docs[idUser]['prixEnCours'],
+                                userList[idUser]['prenom'],
+                                userList[idUser]['nom'],
                                 now.toString());
                           }
                         },
@@ -350,7 +362,7 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
                       SizedBox(width: 30),
 
                       Column(children: <Widget>[
-                        if (docs[2]['estTermine'] == false)
+                        if (docs[idUser]['estTermine'] == false)
                           CircularCountDownTimer(
                             // Countdown duration in Seconds.
                             duration: 600,
@@ -418,21 +430,21 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
                               modifierTermine(
                                   nomProduit,
                                   imageProduit,
-                                  docs[2]['pileEnchere'][
-                                              docs[2]['pileEnchere'].length - 1]
-                                          ['nom']
+                                  docs[idUser]['pileEnchere'][
+                                          docs[idUser]['pileEnchere'].length -
+                                              1]['nom']
                                       .toString(),
-                                  docs[2]['pileEnchere'][
-                                              docs[2]['pileEnchere'].length - 1]
-                                          ['prenom']
+                                  docs[idUser]['pileEnchere'][
+                                          docs[idUser]['pileEnchere'].length -
+                                              1]['prenom']
                                       .toString(),
-                                  docs[2]['pileEnchere'][
-                                              docs[2]['pileEnchere'].length - 1]
+                                  docs[idUser]['pileEnchere']
+                                              [docs[idUser]['pileEnchere'].length - 1]
                                           ['prixEnCours']
                                       .toString());
                             },
                           ),
-                        if (docs[2]['estTermine'] == true)
+                        if (docs[idUser]['estTermine'] == true)
                           Text("l'enchère est terminé",
                               style: TextStyle(color: Colors.red)),
                       ]),
@@ -462,14 +474,15 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
 
                           // print(now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString());
 
-                          if (userList[0]['nombreJetons'] != "0" &&
-                              docs[2]['estTermine'] == false) {
-                            encherire("0.2", docs[2]['prixEnCours']);
+                          if (userList[idUser]['nombreJetons'] != "0" &&
+                              docs[idUser]['estTermine'] == false) {
+                            encherire("0.2", docs[2]['prixEnCours'],
+                                docs[idUser]["id"]);
                             print(now.toString());
                             addContributionToPile(
-                                docs[2]['prixEnCours'],
-                                userList[0]['prenom'],
-                                userList[0]['nom'],
+                                docs[idUser]['prixEnCours'],
+                                userList[idUser]['prenom'],
+                                userList[idUser]['nom'],
                                 now.toString());
                           }
                         },
@@ -483,10 +496,11 @@ class detailsProduitDirectState extends State<detailsProduitDirect> {
     ]))));
   }
 
-  void encherire(String valeurAjoute, String valeurEnCours) {
+  void encherire(String valeurAjoute, String valeurEnCours, String productID) {
     DatabaseService ds = DatabaseService(uid: uid);
-    ds.encher(valeurAjoute, valeurEnCours);
-    ds.modifierJeton(userList[0]['nombreJetons'].toString());
+
+    ds.encher(valeurAjoute, valeurEnCours, productID);
+    ds.modifierJeton(userList[idUser]['nombreJetons'].toString());
   }
 
   void terminerEnchere() {

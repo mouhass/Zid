@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:date_count_down/date_count_down.dart';
 import 'package:get/get.dart';
+import 'package:telephony/telephony.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -67,13 +68,11 @@ class NosProduitsState extends State<NosProduit> {
   Color topNavSelected1 = Colors.lightBlue;
   Color topNavSelected2 = Colors.grey;
   Color topNavSelected3 = Colors.grey;
-  List docs = [];
-  List userData = [];
+  RxInt count = 200.obs;
   final CollectionReference userbaseRef =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference databaseRef =
       FirebaseFirestore.instance.collection('products');
-
   Future<List> read() async {
     QuerySnapshot querySnapshot;
     List docs = [];
@@ -116,10 +115,10 @@ class NosProduitsState extends State<NosProduit> {
     }
   }
 
-  RxInt count = 200.obs;
-
   @override
   Widget build(BuildContext context) {
+    List docs = [];
+    List userData = [];
     setState(() {
       read().then((value) => setState(() {
             docs = value;
@@ -129,9 +128,26 @@ class NosProduitsState extends State<NosProduit> {
             userData = value;
           }));
     });
-    countTime = CountDown().timeLeft(DateTime.parse(date), "terminé");
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
+    void modifierMontant(RxInt montant) {
+      DatabaseService ds = DatabaseService(uid: uid);
+      ds.updateMontant(montant);
+    }
+
+    void modifierAvancement(String productID, String avancement) {
+      DatabaseService ds = DatabaseService(uid: uid);
+      ds.updateAvancement(productID, avancement);
+    }
+
+    void modifierEncheres(String productID, String nomProduit,
+        String imageProduit, String avancement, String date) {
+      DatabaseService ds = DatabaseService(uid: uid);
+      ds.updateEncheres(productID, nomProduit, imageProduit, avancement, date);
+    }
+
+    void addEnCours(String imageProduit, String nomProduit) {
+      DatabaseService ds = DatabaseService(uid: uid);
+      ds.updateEnCours(imageProduit, nomProduit);
+    }
 
     for (int i = 0; i < docs.length; i++) {
       for (int j = 0; j < userData.length; j++) {
@@ -144,6 +160,13 @@ class NosProduitsState extends State<NosProduit> {
         }
       }
     }
+
+    countTime = CountDown().timeLeft(DateTime.parse(date), "terminé");
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
+    int y = docs.length;
+    int z = userData.length;
+
     return Row(children: <Widget>[
       Column(children: [
         Stack(
@@ -286,6 +309,8 @@ class NosProduitsState extends State<NosProduit> {
                   children: [
                     Row(children: [
                       Text("Prix magazin", style: TextStyle(fontSize: 12)),
+                      // Text(y.toString(), style: TextStyle(fontSize: 12)),
+                      // Text(z.toString(), style: TextStyle(fontSize: 12)),
                       Container(width: (30 / 360) * w)
                     ]),
                     SizedBox(
@@ -364,6 +389,8 @@ class NosProduitsState extends State<NosProduit> {
               if (docs[i]['productID'] == productID) {
                 double x = double.parse(docs[i]['avancement']) + 1;
                 modifierAvancement(productID, x.toString());
+                print(
+                    'wow----- -----           ---------------           --------------------');
                 modifierEncheres(
                     productID,
                     docs[i]['nomProduit'],
@@ -422,27 +449,6 @@ class NosProduitsState extends State<NosProduit> {
 //---------------
       ]),
     ]);
-  }
-
-  void modifierMontant(RxInt montant) {
-    DatabaseService ds = DatabaseService(uid: uid);
-    ds.updateMontant(montant);
-  }
-
-  void modifierAvancement(String productID, String avancement) {
-    DatabaseService ds = DatabaseService(uid: uid);
-    ds.updateAvancement(productID, avancement);
-  }
-
-  void modifierEncheres(String productID, String nomProduit,
-      String imageProduit, String avancement, String date) {
-    DatabaseService ds = DatabaseService(uid: uid);
-    ds.updateEncheres(productID, nomProduit, imageProduit, avancement, date);
-  }
-
-  void addEnCours(String imageProduit, String nomProduit) {
-    DatabaseService ds = DatabaseService(uid: uid);
-    ds.updateEnCours(imageProduit, nomProduit);
   }
 }
 

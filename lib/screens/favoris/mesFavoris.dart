@@ -15,20 +15,10 @@ class MesFavorisState extends State<MesFavoris> {
   Widget build(BuildContext context) {
     return (Scaffold(
         appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Image(image: AssetImage('assets/Logo@1X.png')),
-            backgroundColor: Colors.white,
-            actions: [
-              IconButton(
-                icon: Image.asset('assets/avatar.png'),
-                color: Colors.orange,
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return MonProfile(uid: uid);
-                  }));
-                },
-              ),
-            ]),
+          automaticallyImplyLeading: false,
+          title: Image(image: AssetImage('assets/Logo@1X.png')),
+          backgroundColor: Colors.white,
+        ),
         body: Container(
             color: Colors.white,
             child: Padding(

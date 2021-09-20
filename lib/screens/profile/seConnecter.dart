@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zid/screens/home/admin.dart';
 import 'package:zid/screens/home/secondScreen.dart';
 import 'package:zid/services/authentification.dart';
 import 'package:zid/screens/profile/sinscrire.dart';
@@ -130,11 +131,19 @@ class SeConnecterState extends State<SeConnecter> {
 
   void signInUser() async {
     dynamic result = await _auth.signIn(email, motDePasse);
-    if (result != null) {
+    if (result != null &&
+        email != "admin@gmail.com" &&
+        motDePasse != "admin123") {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MyHomePage(uid: result.uid)),
       );
+    }
+    if (result != null &&
+        email == "admin@gmail.com" &&
+        motDePasse == "admin123") {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => AdminPage()));
     }
   }
 }

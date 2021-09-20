@@ -97,7 +97,7 @@ class lesDetails extends State<detailsProduit> {
       "assets/Group5.png"
     ];
 
-    countTime = CountDown().timeLeft(DateTime.parse("2021-07-23"), "Terminé");
+    countTime = CountDown().timeLeft(DateTime.parse("2021-07-23"), "en attente");
     return Scaffold(
         body: Container(
             child: SingleChildScrollView(
